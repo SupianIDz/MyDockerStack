@@ -1,0 +1,56 @@
+name: "next"
+
+services:
+  cloud:
+    image: nextcloud:latest
+    container_name: "next-cloud"
+    restart: always
+    ports:
+      - "6980:80"
+    links:
+      - mysql
+    volumes:
+      - cloud:/var/www/html
+    networks:
+      - cloud
+    environment:
+      - REDIS_HOST=redis
+      - MYSQL_USER=cloud
+      - MYSQL_HOST=mysql
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=cloud
+      - OVERWRITEPROTOCOL=https
+
+  mysql:
+    image: mysql:8.4
+    container_name: "next-mysql"
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - cloud
+    environment:
+      - MYSQL_USER=cloud
+      - MYSQL_DATABASE=cloud
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+
+  redis:
+    image: redis:7.4
+    container_name: "next-redis"
+    restart: always
+    volumes:
+      - redis:/data
+    networks:
+      - cloud
+
+volumes:
+  cloud:
+  mysql:
+  redis:
+
+networks:
+  cloud:
+    name: "next-cloud"
+    driver: bridge
