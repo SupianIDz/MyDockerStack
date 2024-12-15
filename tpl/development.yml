@@ -1,12 +1,12 @@
 # This stack is used for development purposes only
 # It should not be used in production
 
-name: "dev"
+name: "devs"
 
 services:
   mysql:
     image: mysql:9.0
-    container_name: "dev-mysql"
+    container_name: "devs-mysql"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
@@ -14,32 +14,32 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - dev
+      - devs
 
   redis:
     image: redis:7.4
-    container_name: "dev-redis"
+    container_name: "devs-redis"
     volumes:
       - redis:/data
     ports:
       - "6379:6379"
     networks:
-      - dev
+      - devs
 
   mailpit:
     image: axllent/mailpit
-    container_name: "dev-mailp"
+    container_name: "devs-mailp"
     ports:
       - "6925:8025"  # Web UI
       - "1025:1025"  # SMTP
     networks:
-      - dev
+      - devs
 
 volumes:
   mysql:
   redis:
 
 networks:
-  dev:
-    name: "dev"
+  devs:
+    name: "devs"
     driver: bridge
